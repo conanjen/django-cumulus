@@ -1,6 +1,8 @@
 import datetime
 import optparse
 import os
+import re
+import fnmatch
 
 import cloudfiles
 
