@@ -89,11 +89,16 @@ class Command(BaseCommand):
             self.skip_count, self.create_count, self.update_count, self.delete_count)
 
     def upload_files(self, arg, dirname, names):
-        # upload or skip items
-        for item in names:
-            if item in self.FILTER_LIST:
-                continue # Skip files we don't want to sync
 
+        # setup exclude list
+        excludes = self.FILTER_LIST
+        excludes = r'|'.join([fnmatch.translate(x) for x in excludes]) or r'$.'
+
+        # create new list of files
+        files = [f for f in names if not re.match(excludes, f)]
+
+        # go through new list of files with wildcard excluded
+        for item in files:
             file_path = os.path.join(dirname, item)
             if os.path.isdir(file_path):
                 continue # Don't try to upload directories
